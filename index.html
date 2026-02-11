@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pier Mairowski - DeRose Method</title>
+    <style>
+        /* --- CSS GERAL --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        
+        body { 
+            background-color: #1a1a1a; 
+            color: #fff; 
+            height: 100dvh; 
+            width: 100vw; 
+            overflow: hidden; 
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+        }
+
+        /* --- AVISO DE PAISAGEM --- */
+        #landscape-warning {
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;
+        }
+        .rotate-icon { font-size: 3rem; margin-bottom: 20px; animation: rotatePhone 2s infinite; }
+        .rotate-text { font-size: 1.2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        @keyframes rotatePhone { 0% { transform: rotate(-90deg); } 50% { transform: rotate(0deg); } 100% { transform: rotate(-90deg); } }
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            #landscape-warning { display: flex !important; }
+            #app { display: none !important; }
+        }
+
+        /* O CARTÃO */
+        #app { 
+            width: 100%; height: 100%; position: relative; 
+            background-color: #000; max-width: 480px; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.5); 
+        }
+
+        /* ESTRUTURA DAS PÁGINAS */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: flex-end; 
+            padding: 20px 20px 30px 20px; 
+            background-size: cover; background-position: center;
+            transition: opacity 0.5s ease-in-out; opacity: 0; pointer-events: none; z-index: 1;
+        }
+        .screen.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        #page-1 { background-image: url('foto-fundo.jpg'); }
+        #page-2 { background-color: #000; justify-content: flex-end; padding-bottom: 30px; }
+
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.95) 90%);
+            z-index: 1;
+        }
+
+        .content {
+            position: relative; z-index: 5; text-align: center;
+            display: flex; flex-direction: column; gap: 10px;
+            width: 100%; margin: 0 auto; 
+        }
+
+        /* TIPOGRAFIA */
+        h1 { font-size: 1.6rem; line-height: 1.1; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        h2 { font-size: 0.85rem; color: #dcb368; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+        h3 { font-size: 1.2rem; font-weight: bold; text-transform: uppercase; color: #fff; margin-bottom: 5px; }
+
+        .tagline-tempo {
+            display: inline-block; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(4px);
+            padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 10px;
+        }
+
+        /* VÍDEO */
+        .video-container {
+            width: auto; height: auto; max-height: 40vh; aspect-ratio: 9/16; 
+            background-color: #000; border-radius: 12px; border: 1px solid #333; overflow: hidden; 
+            margin: 0 auto 15px auto; position: relative;
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* LISTA BENEFÍCIOS */
+        .benefits-list {
+            text-align: left; width: fit-content; margin: 0 auto 15px auto;
+            font-size: 0.9rem; color: #ccc; list-style: none;
+        }
+        .benefits-list li { margin-bottom: 8px; display: flex; align-items: center; }
+        .benefits-list li::before { content: '⚡'; margin-right: 10px; color: #dcb368; font-size: 1rem; }
+
+        /* BOTÕES */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 5px; }
+        
+        .btn { 
+            display: flex; align-items: center; justify-content: center; 
+            width: 100%; padding: 16px; border-radius: 50px; 
+            text-decoration: none; font-weight: bold; font-size: 0.9rem; 
+            cursor: pointer; border: none; transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.96); }
+
+        .btn-primary { background-color: #fff; color: #000; box-shadow: 0 4px 15px rgba(255,255,255,0.2); text-transform: uppercase; }
+        .btn-outline { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.4); text-transform: uppercase; }
+        .btn-whatsapp { background-color: #25D366; color: #fff; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2); text-transform: uppercase; }
+        
+        /* --- RODAPÉ COM LINKS DISCRETOS (INSTA + CONTATO) --- */
+        .footer-links {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 5px; margin-top: 5px;
+        }
+
+        .link-discreto {
+            color: rgba(255,255,255,0.6); 
+            font-size: 0.75rem; 
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            transition: color 0.3s, background 0.3s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .link-discreto:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+        .nav-btn-back { position: absolute; top: 20px; left: 10px; z-index: 20; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 1.8rem; cursor: pointer; padding: 10px; }
+        .logo-area { position: absolute; top: 30px; left: 0; width: 100%; text-align: center; z-index: 20; pointer-events: none; }
+        .logo-text { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8); font-weight: 600; opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <div id="landscape-warning">
+        <div class="rotate-icon">📱</div>
+        <div class="rotate-text">Gire seu celular</div>
+    </div>
+
+    <div id="app">
+        <div class="logo-area">
+            <span class="logo-text">DeRose Method</span>
+        </div>
+
+        <div id="page-1" class="screen active">
+            <div class="overlay"></div>
+            <div class="content">
+                <h1>O treinamento mais ancestral do mundo</h1>
+                <h2>definição muscular | flexibilidade | Mindfulness</h2>
+                <div><span class="tagline-tempo">⏱ Tudo em 1h de treino</span></div>
+                
+                <div class="btn-group">
+                    <a href="https://api.whatsapp.com/send?phone=5511980145483&text=Ol%C3%A1,%20quero%20agendar%20uma%20experi%C3%AAncia." class="btn btn-primary">
+                        QUERO CONHECER
+                    </a>
+                    
+                    <button id="btn-como-funciona" class="btn btn-outline">
+                        QUAL O TIPO DE TREINAMENTO? ▶
+                    </button>
+                    
+                    <div class="footer-links">
+                        <a href="https://instagram.com/pier.mairowski" target="_blank" class="link-discreto">
+                            📸 Ver Lifestyle
+                        </a>
+
+                        <a href="contato.vcf" class="link-discreto">
+                            💾 Salvar Contato
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-2" class="screen">
+            <button id="btn-back" class="nav-btn-back">◀</button>
+            <div class="content">
+                <h3>Performance Real</h3>
+                <div class="video-container">
+                    <video controls poster="capa-video.jpg" playsinline>
+                        <source src="video.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <ul class="benefits-list">
+                    <li>Alta Performance</li>
+                    <li>Gestão de Stress</li>
+                    <li>Foco e Vitalidade</li>
+                </ul>
+                <div class="btn-group">
+                    <a href="https://api.whatsapp.com/send?phone=5511980145483&text=Vi%20o%20v%C3%ADdeo%20e%20quero%20agendar." class="btn btn-whatsapp">
+                        AGENDAR AGORA 
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const page1 = document.getElementById('page-1');
+            const page2 = document.getElementById('page-2');
+            const btnComoFunciona = document.getElementById('btn-como-funciona');
+            const btnBack = document.getElementById('btn-back');
+
+            btnComoFunciona.addEventListener('click', () => {
+                page1.classList.remove('active');
+                page2.classList.add('active');
+            });
+
+            btnBack.addEventListener('click', () => {
+                page2.classList.remove('active');
+                page1.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

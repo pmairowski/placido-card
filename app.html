@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <title>Meu QR Code</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+
+        /* O Cartão do QR Code */
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255,255,255,0.1);
+            width: 80%;
+            max-width: 350px;
+        }
+
+        .qr-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        h1 { margin-top: 30px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; color: #dcb368; }
+        p { color: #666; font-size: 0.9rem; margin-top: 5px; }
+
+        /* Botão de Compartilhar Nativo */
+        .btn-share {
+            margin-top: 40px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-share:active { background: rgba(255,255,255,0.2); }
+
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <img src="qrcode.png" alt="QR Code" class="qr-img">
+    </div>
+
+    <h1>Plácido Salles</h1>
+    <p>DeRose Method</p>
+
+    <button id="shareBtn" class="btn-share">
+        🔗 Compartilhar Link
+    </button>
+
+    <script>
+        // 1. Registrar o Service Worker (Para funcionar Offline)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("App instalado para offline!"))
+            .catch((err) => console.log("Erro SW:", err));
+        }
+
+        // 2. Função de Compartilhar Nativo (Abre a gaveta do Android/iOS)
+        const shareBtn = document.getElementById('shareBtn');
+        shareBtn.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Plácido Salles - DeRose Method',
+                        text: 'Olá! Aqui está meu cartão digital:',
+                        // COLOQUE O LINK DO SEU CARTÃO AQUI EMBAIXO:
+                        url: 'https://placido-card.vercel.app/' 
+                    });
+                } catch (err) {
+                    console.log('Cancelado');
+                }
+            } else {
+                alert('Copie o link: https://placido-card.vercel.app/');
+            }
+        });
+    </script>
+</body>
+</html>
